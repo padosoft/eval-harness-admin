@@ -6,6 +6,26 @@
 
 `eval-harness-ui` is a host-driven SPA package that gives QA teams and ops teams a ready dashboard without touching the `eval-harness` backend repository.
 
+Backend API repository: [padosoft/eval-harness](https://github.com/padosoft/eval-harness)
+
+## Table of contents
+
+- [What this package gives you](#what-this-package-gives-you)
+- [Screen list](#screen-list)
+- [Why this package exists](#why-this-package-exists)
+- [Architecture in plain words](#architecture-in-plain-words)
+- [Runtime contract](#runtime-contract)
+- [Production install (beginner-proof, copy/paste)](#production-install-beginner-proof-copy-paste)
+- [Minimal security wiring](#minimal-security-wiring)
+- [Environment and config reference](#environment-and-config-reference)
+- [API mapping the UI expects](#api-mapping-the-ui-expects)
+- [Local development setup](#local-development-setup)
+- [Release process (what is expected in PR flow)](#release-process-what-is-expected-in-pr-flow)
+- [Constraints and behavior notes](#constraints-and-behavior-notes)
+- [Roadmap (current status aligned with AGENTS docs)](#roadmap-current-status-aligned-with-agents-docs)
+- [Contributing and support](#contributing-and-support)
+- [License](#license)
+
 ## What this package gives you
 
 - 7 operational screens shipped as a SPA
@@ -18,13 +38,22 @@
 
 ### Screen list
 
-- Dashboard
-- Reports list
-- Report detail
-- Compare
-- Trend
-- Adversarial manifests
-- Live batches
+- Dashboard  
+  ![Dashboard](resources/screenshoots/eval-harness-admin-Dashboard.png)
+- Reports list  
+  ![Reports list](resources/screenshoots/eval-harness-admin-reports.png)
+- Report detail  
+  ![Report detail](resources/screenshoots/eval-harness-admin-report-details.png)
+- Compare  
+  ![Compare](resources/screenshoots/eval-harness-admin-compare-reports.png)
+- Trend  
+  ![Trend](resources/screenshoots/eval-harness-admin-dataset-trend.png)
+- Adversarial manifests  
+  ![Adversarial manifests](resources/screenshoots/eval-harness-admin-adversarial-manifest.png)
+- Adversarial manifest details  
+  ![Adversarial manifest details](resources/screenshoots/eval-harness-admin-adversarial-manifest-details.png)
+- Live batches  
+  ![Live batches](resources/screenshoots/eval-harness-live-batches.png)
 
 ## Why this package exists
 
