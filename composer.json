@@ -1,0 +1,78 @@
+{
+  "name": "padosoft/eval-harness-ui",
+  "description": "Admin dashboard UI package for padosoft/eval-harness",
+  "type": "library",
+  "license": "MIT",
+  "homepage": "https://github.com/padosoft/eval-harness-ui",
+  "keywords": [
+    "laravel",
+    "admin",
+    "eval",
+    "dashboard",
+    "package",
+    "react",
+    "vite"
+  ],
+  "authors": [
+    {
+      "name": "Padosoft"
+    }
+  ],
+  "require": {
+    "php": "^8.3",
+    "illuminate/support": "^11.0|^12.0|^13.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11.5",
+    "orchestra/testbench": "^9.4",
+    "pestphp/pest": "^3.0",
+    "pestphp/pest-plugin-laravel": "^3.0",
+    "phpstan/phpstan": "^2.1",
+    "laravel/pint": "^1.18",
+    "nunomaduro/collision": "^8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Padosoft\\EvalHarnessUi\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Padosoft\\EvalHarnessUi\\Tests\\": "tests/"
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Padosoft\\EvalHarnessUi\\EvalHarnessUiServiceProvider"
+      ],
+      "aliases": {}
+    }
+  },
+  "scripts": {
+    "validate": "composer validate --strict --no-check-publish",
+    "format": "vendor/bin/pint",
+    "format:test": "vendor/bin/pint --test",
+    "analyse": "vendor/bin/phpstan analyse --no-progress --memory-limit=-1",
+    "test": "vendor/bin/pest",
+    "test:unit": "vendor/bin/pest tests/Unit",
+    "test:feature": "vendor/bin/pest tests/Feature",
+    "test:all": "composer validate && composer analyse && composer test",
+    "check": "composer test"
+  },
+  "config": {
+    "sort-packages": true,
+    "preferred-install": {
+      "*": "dist"
+    },
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "support": {
+    "issues": "https://github.com/padosoft/eval-harness-ui/issues",
+    "source": "https://github.com/padosoft/eval-harness-ui"
+  }
+}

@@ -1,0 +1,11 @@
+/.phpunit.cache
+/dist
+/node_modules
+/vendor
+/test-results
+/tmp-after-click.png
+/tmp
+/.idea
+/.vscode
+/npm-debug.log*
+/yarn-error.log

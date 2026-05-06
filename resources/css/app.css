@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --eval-elev-1: #ffffff;
+  --eval-elev-2: #f8fafc;
+  --eval-line: #e2e8f0;
+  --eval-muted: #334155;
+}
+
+@layer base {
+  html,
+  body {
+    @apply m-0 min-h-screen bg-slate-50 text-slate-900;
+  }
+
+  #eval-harness-ui-root {
+    @apply min-h-screen;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply rounded-ui border border-slate-200 bg-white p-4 shadow-sm;
+  }
+
+  .metric-badge {
+    @apply rounded-ui inline-flex min-w-16 justify-center bg-slate-100 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600;
+  }
+
+  .status-ok {
+    @apply rounded-ui bg-emerald-100 px-2 py-1 text-xs font-semibold text-emerald-700;
+  }
+
+  .status-warn {
+    @apply rounded-ui bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700;
+  }
+
+  .status-danger {
+    @apply rounded-ui bg-rose-100 px-2 py-1 text-xs font-semibold text-rose-700;
+  }
+
+  .screen-title {
+    @apply text-lg font-semibold text-slate-900;
+  }
+
+  .screen-subtitle {
+    @apply text-sm text-slate-500;
+  }
+}
