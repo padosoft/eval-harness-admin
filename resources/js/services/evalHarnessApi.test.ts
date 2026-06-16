@@ -62,6 +62,51 @@ describe('EvalHarnessApiClient', () => {
     expect(fetch).toHaveBeenCalledWith('/api/online/rag.faq/trend?limit=90', expect.any(Object));
   });
 
+  it('unwraps the enveloped online trend payload from the core endpoint', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        schema_version: 'eval-harness.report-api.v1',
+        schema: 'eval-harness.report-api.v1.online-trend',
+        data: {
+          dataset: 'rag.faq',
+          limit: 90,
+          count: 1,
+          threshold: 0.8,
+          points: [{ date: '2026-06-14', pass_rate: 0.72, total: 39, passed: 28 }],
+        },
+      }),
+    } as Response);
+
+    const client = createApiClient('/api');
+    const response = await client.getOnlineTrend('rag.faq', 90);
+
+    expect(response.error).toBeUndefined();
+    expect(response.data).toMatchObject({ dataset: 'rag.faq', threshold: 0.8 });
+    expect(response.data?.points[0]).toMatchObject({ date: '2026-06-14', pass_rate: 0.72 });
+  });
+
+  it('rejects an online trend payload with malformed points', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        schema_version: '1.0',
+        schema: 'eval-harness.report-api.v1.online-trend',
+        dataset: 'rag.faq',
+        threshold: 0.8,
+        points: [{ date: '2026-06-14' }],
+      }),
+    } as Response);
+
+    const client = createApiClient('/api');
+    const response = await client.getOnlineTrend('rag.faq');
+
+    expect(response.data).toBeUndefined();
+    expect(response.error).toMatchObject({ kind: 'invalid' });
+  });
+
   it('rejects an online trend payload with the wrong schema', async () => {
     vi.mocked(fetch).mockResolvedValueOnce({
       ok: true,

@@ -102,6 +102,33 @@ const asResult = <T>(payload: unknown, expectedSchema?: string, validateShape?: 
 
 type SchemaValidator = (value: unknown) => boolean;
 
+const onlineTrendBody = (value: unknown): Record<string, unknown> => {
+  if (!isRecord(value)) {
+    return {};
+  }
+
+  return isRecord(value.data) ? value.data : value;
+};
+
+const isValidOnlineTrend = (body: Record<string, unknown>): boolean => {
+  if (typeof body.dataset !== 'string' || typeof body.threshold !== 'number') {
+    return false;
+  }
+
+  if (!Array.isArray(body.points)) {
+    return false;
+  }
+
+  return body.points.every(
+    (point) =>
+      isRecord(point) &&
+      typeof point.date === 'string' &&
+      typeof point.pass_rate === 'number' &&
+      typeof point.total === 'number' &&
+      typeof point.passed === 'number',
+  );
+};
+
 export class EvalHarnessApiClient {
   constructor(
     private readonly baseUrl: string,
@@ -226,15 +253,24 @@ export class EvalHarnessApiClient {
   }
 
   async getOnlineTrend(dataset: string, limit = 30): Promise<ApiResult<OnlineTrendPayload>> {
-    return this.request<OnlineTrendPayload>(
+    // The core endpoint returns the standard enveloped shape
+    // ({ schema_version, schema, data: { dataset, points, threshold } }).
+    // We accept both the enveloped and a flattened shape (the latter is
+    // what the e2e mock emits) and validate every field the UI relies on
+    // so a malformed payload cannot produce a zero threshold or NaN
+    // chart geometry.
+    const result = await this.request<Record<string, unknown>>(
       `/online/${encodeURIComponent(dataset)}/trend?limit=${limit}`,
       this.requestOptions(),
       'eval-harness.report-api.v1.online-trend',
-      (value): boolean =>
-        isRecord(value) &&
-        typeof value.dataset === 'string' &&
-        Array.isArray(value.points),
+      (value): boolean => isValidOnlineTrend(onlineTrendBody(value)),
     );
+
+    if (result.error || !result.data) {
+      return { error: result.error };
+    }
+
+    return { data: onlineTrendBody(result.data) as unknown as OnlineTrendPayload };
   }
 
   async getAdversarialManifests(): Promise<ApiResult<{ items: AdversarialManifestSummary[] }>> {

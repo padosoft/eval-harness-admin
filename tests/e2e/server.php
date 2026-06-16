@@ -439,6 +439,7 @@ if (str_starts_with($path, $apiBase)) {
     }
 
     if (preg_match('#^online/([^/]+)/trend$#', $apiPath, $matches)) {
+        $jsonOnlineTrend['dataset'] = rawurldecode((string) $matches[1]);
         sendJsonResponse($jsonOnlineTrend);
     }
 
