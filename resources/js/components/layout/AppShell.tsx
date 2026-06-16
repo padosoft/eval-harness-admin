@@ -9,6 +9,7 @@ const navItems = [
   { to: '/trend', key: 'nav_trend' },
   { to: '/adversarial', key: 'nav_adversarial' },
   { to: '/live-batches', key: 'nav_live_batches' },
+  { to: '/online-monitoring', key: 'nav_online_monitoring' },
 ];
 
 const AppShell = ({ title, version, children }: { title: string; version: string; children: ReactNode }) => {
