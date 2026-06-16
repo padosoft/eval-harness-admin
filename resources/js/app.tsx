@@ -8,6 +8,7 @@ import TrendPage from '@/pages/TrendPage';
 import AdversarialManifestsPage from '@/pages/AdversarialManifestsPage';
 import AdversarialManifestDetailPage from '@/pages/AdversarialManifestDetailPage';
 import LiveBatchesPage from '@/pages/LiveBatchesPage';
+import OnlineMonitoringPage from '@/pages/OnlineMonitoringPage';
 import { useI18n } from '@/hooks/useI18n';
 
 const App = ({ version, title }: { version: string; title: string }) => {
@@ -24,6 +25,7 @@ const App = ({ version, title }: { version: string; title: string }) => {
       <Route path="/adversarial" element={<AdversarialManifestsPage />} />
       <Route path="/adversarial/:name" element={<AdversarialManifestDetailPage />} />
       <Route path="/live-batches" element={<LiveBatchesPage />} />
+      <Route path="/online-monitoring" element={<OnlineMonitoringPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
     </AppShell>

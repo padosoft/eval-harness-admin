@@ -4,6 +4,7 @@ import type {
   ApiResult,
   LiveBatch,
   LiveBatchProgress,
+  OnlineTrendPayload,
   ReportListPayload,
   TrendPayload,
 } from '@/types/api';
@@ -221,6 +222,18 @@ export class EvalHarnessApiClient {
         isRecord(value) &&
         typeof value.dataset === 'string' &&
         Array.isArray(value.metrics),
+    );
+  }
+
+  async getOnlineTrend(dataset: string, limit = 30): Promise<ApiResult<OnlineTrendPayload>> {
+    return this.request<OnlineTrendPayload>(
+      `/online/${encodeURIComponent(dataset)}/trend?limit=${limit}`,
+      this.requestOptions(),
+      'eval-harness.report-api.v1.online-trend',
+      (value): boolean =>
+        isRecord(value) &&
+        typeof value.dataset === 'string' &&
+        Array.isArray(value.points),
     );
   }
 

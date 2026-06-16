@@ -50,6 +50,21 @@ export interface TrendPayload extends ApiSchemaMeta {
   cohorts?: string[];
 }
 
+export interface OnlinePassRatePoint {
+  date: string;
+  pass_rate: number;
+  total: number;
+  passed: number;
+}
+
+export interface OnlineTrendPayload extends ApiSchemaMeta {
+  dataset: string;
+  limit: number;
+  count: number;
+  threshold: number;
+  points: OnlinePassRatePoint[];
+}
+
 export interface DashboardPayload {
   report_count: number;
   latest_macro_f1?: number | null;
