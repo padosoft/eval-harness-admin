@@ -28,7 +28,7 @@ Backend API repository: [padosoft/eval-harness](https://github.com/padosoft/eval
 
 ## What this package gives you
 
-- 7 operational screens shipped as a SPA
+- 8 operational screens shipped as a SPA
 - Fast route-based admin integration in the host app
 - Clear errors for `404`, `422`, `503` response cases
 - English/Italian translations
@@ -54,6 +54,9 @@ Backend API repository: [padosoft/eval-harness](https://github.com/padosoft/eval
   ![Adversarial manifest details](resources/screenshoots/eval-harness-admin-adversarial-manifest-details.png)
 - Live batches  
   ![Live batches](resources/screenshoots/eval-harness-live-batches.png)
+- Online monitoring — production pass-rate-over-time chart with a drift
+  alert band, consuming `GET /<prefix>/online/{dataset}/trend`
+  (requires `padosoft/eval-harness` `^1.3.0`).
 
 ## Why this package exists
 

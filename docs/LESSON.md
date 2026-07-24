@@ -114,3 +114,9 @@ gh api graphql `
   - verifica processi residui prima di aprire un nuovo subtask;
   - pulizia manuale di `node_modules`, `vendor`, `.phpunit.cache`, `test-results`.
 - Regola operativa: se un test genera listener inatteso, il subtask resta bloccato e si apre un fix rapido prima di proseguire.
+
+## 2026-06-16 — Online monitoring screen
+
+- Il core API incapsula sotto `data`, ma questo admin segue la convenzione "payload piatto" (il mock e2e e i validator del client leggono i campi al top level). La nuova `getOnlineTrend` rispecchia esattamente `getDatasetTrend` per coerenza: non introdurre un unwrap solo per un endpoint.
+- Per un grafico SVG accessibile e testabile, affiancare alla geometria una `<table class="sr-only">` con gli stessi dati: Playwright e screen reader hanno un contratto stabile (celle per data) indipendente dai pixel della polyline.
+- La select dataset della schermata Online riusa `getReports()` per popolare le opzioni (come `TrendPage`), perché non esiste un endpoint "elenca dataset online"; il mock e2e dei report include `rag.faq`.

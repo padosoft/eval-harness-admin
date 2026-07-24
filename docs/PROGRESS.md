@@ -73,3 +73,10 @@
   - CI verde;
   - commenti must-fix risolti.
 - `main` non riceve merge finché non si completa il loop sopra.
+
+## 2026-06-16 — Online monitoring screen (feat/online-monitoring-screen)
+
+- Aggiunta l'ottava schermata "Online Monitoring" che consuma il nuovo endpoint core `GET /<prefix>/online/{dataset}/trend` (`eval-harness.report-api.v1.online-trend`, richiede `padosoft/eval-harness ^1.3.0`).
+- `OnlineTrendPayload`/`OnlinePassRatePoint` types, `EvalHarnessApiClient.getOnlineTrend()` (mirror di `getDatasetTrend`), `PassRateLineChart` (SVG dependency-free con soglia tratteggiata + tabella dati visually-hidden per a11y/Playwright), `OnlineMonitoringPage`, rotta `/online-monitoring`, voce nav, chiavi i18n en/it, mock e2e + spec Playwright.
+- Gate locali verdi: `tsc --noEmit` ok; `vite build` ok; `vitest run` => 6 test; `playwright test` => 11 test (incluso `online-monitoring.spec.ts` e accessibility).
+- PROSSIMO STEP REMOTO: push branch, PR su `main`, loop Copilot/CI, release allineata a core v1.3.0.

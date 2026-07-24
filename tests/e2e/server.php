@@ -137,6 +137,20 @@ $jsonTrend = [
     ],
 ];
 
+$jsonOnlineTrend = [
+    'schema_version' => '1.0',
+    'schema' => 'eval-harness.report-api.v1.online-trend',
+    'dataset' => 'rag.faq',
+    'limit' => 90,
+    'count' => 3,
+    'threshold' => 0.8,
+    'points' => [
+        ['date' => '2026-06-12', 'pass_rate' => 0.91, 'total' => 40, 'passed' => 36],
+        ['date' => '2026-06-13', 'pass_rate' => 0.86, 'total' => 42, 'passed' => 36],
+        ['date' => '2026-06-14', 'pass_rate' => 0.72, 'total' => 39, 'passed' => 28],
+    ],
+];
+
 $jsonAdversarial = [
     'schema_version' => '1.0',
     'schema' => 'eval-harness.report-api.v1.adversarial-manifests',
@@ -422,6 +436,11 @@ if (str_starts_with($path, $apiBase)) {
 
     if (preg_match('#^datasets/([^/]+)/trend$#', $apiPath, $matches)) {
         sendJsonResponse($jsonTrend);
+    }
+
+    if (preg_match('#^online/([^/]+)/trend$#', $apiPath, $matches)) {
+        $jsonOnlineTrend['dataset'] = rawurldecode((string) $matches[1]);
+        sendJsonResponse($jsonOnlineTrend);
     }
 
     if ($apiPath === 'adversarial/manifests') {
