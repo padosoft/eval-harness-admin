@@ -27,8 +27,14 @@ const PrecisionPanel = ({ precision, aggregates }: Props) => {
   }
 
   const unstable = unstableAggregates(aggregates);
-  const resolution = precision.resolution;
-  const resolvable = precision.target_resolvable === true;
+
+  // The run-level block is a documented shape of the same payload, so a report
+  // that records its statistics there must not read as "no statistics".
+  const resolution = precision.resolution ?? precision.run?.resolution;
+  const resolvable =
+    typeof precision.target_resolvable === 'boolean'
+      ? precision.target_resolvable
+      : precision.run?.target_resolvable;
 
   return (
     <div className="space-y-4">
@@ -47,11 +53,17 @@ const PrecisionPanel = ({ precision, aggregates }: Props) => {
           <p className="text-2xl font-semibold">
             {typeof precision.target_delta === 'number' ? formatPercent(precision.target_delta) : '—'}
           </p>
-          <p className={`mt-1 text-xs ${resolvable ? 'text-emerald-600' : 'text-amber-600'}`}>
-            {resolvable
-              ? t('text_target_resolvable')
-              : t('text_target_not_resolvable').replace(':n', String(precision.required_repetitions ?? '—'))}
-          </p>
+          {/* Three states, not two: claiming "not detectable" when the run
+              simply did not record it is an assertion nobody made. */}
+          {resolvable === undefined ? (
+            <p className="mt-1 text-xs text-slate-500">{t('text_target_unknown')}</p>
+          ) : (
+            <p className={`mt-1 text-xs ${resolvable ? 'text-emerald-600' : 'text-amber-600'}`}>
+              {resolvable
+                ? t('text_target_resolvable')
+                : t('text_target_not_resolvable').replace(':n', String(precision.required_repetitions ?? '—'))}
+            </p>
+          )}
         </div>
       </div>
 

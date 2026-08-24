@@ -78,12 +78,17 @@ export const worstExecutionOf = (samples: SampleExecution[], sampleId: string): 
     return null;
   }
 
+  // An execution with no scores at all is an *errored* one, and it is the most
+  // interesting thing that can have happened to a row. Ranking it as the best
+  // candidate (positive infinity) hid it behind a sibling execution that
+  // happened to score — showing a successful answer on a row the reader opened
+  // precisely because it failed.
   const meanScore = (sample: SampleExecution): number => {
     const scores = Object.values(sample.scores ?? {})
       .map((entry) => entry?.score)
       .filter((score): score is number => typeof score === 'number');
 
-    return scores.length === 0 ? Number.POSITIVE_INFINITY : scores.reduce((a, b) => a + b, 0) / scores.length;
+    return scores.length === 0 ? Number.NEGATIVE_INFINITY : scores.reduce((a, b) => a + b, 0) / scores.length;
   };
 
   return candidates.reduce((worst, sample) => (meanScore(sample) < meanScore(worst) ? sample : worst));
