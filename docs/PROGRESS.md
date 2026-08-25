@@ -80,3 +80,33 @@
 - `OnlineTrendPayload`/`OnlinePassRatePoint` types, `EvalHarnessApiClient.getOnlineTrend()` (mirror di `getDatasetTrend`), `PassRateLineChart` (SVG dependency-free con soglia tratteggiata + tabella dati visually-hidden per a11y/Playwright), `OnlineMonitoringPage`, rotta `/online-monitoring`, voce nav, chiavi i18n en/it, mock e2e + spec Playwright.
 - Gate locali verdi: `tsc --noEmit` ok; `vite build` ok; `vitest run` => 6 test; `playwright test` => 11 test (incluso `online-monitoring.spec.ts` e accessibility).
 - PROSSIMO STEP REMOTO: push branch, PR su `main`, loop Copilot/CI, release allineata a core v1.3.0.
+
+## 2026-08-24 — Report detail for eval-harness 1.6
+
+`padosoft/eval-harness` 1.6 added repeated sampling with real statistics, content
+hashes and per-row aggregates, agent trajectories, cost and budgets. All of it
+arrives in the report artifact this screen already fetches in full, so the work
+was reading it rather than exposing it.
+
+- `resources/js/utils/reportBlocks.ts` — readers for `precision`,
+  `sample_aggregates`, `samples`, `cost` and `budget`, plus the orderings the CLI
+  briefing uses (failing worst-first, worst execution of a row). Every reader
+  returns `null`/`[]` for a pre-1.6 report.
+- `components/report/PrecisionPanel` — repetitions, the detectable difference,
+  whether the target delta is resolvable and at what cost, and the unstable rows.
+- `components/report/RowsPanel` — per-row pass rate with its Wilson interval,
+  `row_hash`, and an expandable worst execution carrying the actual output, the
+  judge reason and the trajectory (including a loud line when a run stopped on a
+  pending approval).
+- `components/report/CostPanel` — billed vs derived, per-model table, the
+  "floor, not a figure" warning for unpriced models, and a budget-halt alert.
+- The halt alert is repeated in the page header so it is visible from every tab.
+- **No zeroes for absent data.** A pre-1.6 report gets an explanation and a
+  pointer at the flag that would produce the data; showing `0.0%` would be a
+  number somebody could act on that nobody produced.
+- i18n: 40 new keys in `en` and `it`.
+- Tests: +18 (`26 passed`, was 8). New file:
+  `resources/js/components/report/reportPanels.test.tsx`.
+- Local gate green: `tsc --noEmit`; `npm run test` (26); `npm run build`.
+  The PHP gate was not run locally — this session's proxy cannot authenticate to
+  github.com for the Pest dist downloads — but the diff touches no PHP.
