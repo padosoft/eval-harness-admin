@@ -108,6 +108,20 @@ describe('reportBlocks', () => {
     expect(worstExecutionOf(samples, 'refund-window')?.repetition).toBe(0);
     expect(worstExecutionOf(samples, 'nothing-here')).toBeNull();
   });
+
+  /**
+   * An execution with no scores is an errored one, and it is the most
+   * interesting thing that can have happened to the row. Ranking it best would
+   * show a successful sibling on a row the reader opened because it failed.
+   */
+  it('ranks an unscored execution as the worst, not the best', () => {
+    const withError: SampleExecution[] = [
+      { id: 'r', repetition: 0, actual_output: 'a good answer', scores: { 'exact-match': { score: 1 } } },
+      { id: 'r', repetition: 1, actual_output: '' },
+    ];
+
+    expect(worstExecutionOf(withError, 'r')?.repetition).toBe(1);
+  });
 });
 
 describe('PrecisionPanel', () => {
@@ -139,6 +153,33 @@ describe('PrecisionPanel', () => {
 
     expect(screen.getByText('flaky-row')).toBeInTheDocument();
     expect(screen.queryByText('clean-row')).not.toBeInTheDocument();
+  });
+
+  /**
+   * The run block is a documented shape of the same payload; a report that
+   * records its statistics there must not read as "no statistics".
+   */
+  it('falls back to the nested run block', () => {
+    render(
+      <PrecisionPanel
+        precision={{ repetitions: 5, run: { observations: 50, resolution: 0.12, target_resolvable: true } }}
+        aggregates={aggregates}
+      />,
+    );
+
+    expect(screen.getByText('12.0%')).toBeInTheDocument();
+    expect(screen.getByText(/can detect the difference/i)).toBeInTheDocument();
+  });
+
+  /**
+   * "Not detectable" is an assertion. A run that never recorded it made no
+   * such assertion, and saying so is a third state, not the negative one.
+   */
+  it('does not claim a difference is undetectable when the run never said', () => {
+    render(<PrecisionPanel precision={{ repetitions: 1 }} aggregates={aggregates} />);
+
+    expect(screen.getByText(/did not record whether/i)).toBeInTheDocument();
+    expect(screen.queryByText(/repetitions would be needed/i)).not.toBeInTheDocument();
   });
 
   it('degrades to an explanation rather than to zeroes', () => {
