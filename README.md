@@ -29,6 +29,9 @@ Backend API repository: [padosoft/eval-harness](https://github.com/padosoft/eval
 ## What this package gives you
 
 - 8 operational screens shipped as a SPA
+- Report detail surfaces everything `eval-harness` **1.6** records: per-row
+  aggregates with Wilson intervals and trajectories, sampling precision and
+  unstable rows, and run cost with budget halts
 - Fast route-based admin integration in the host app
 - Clear errors for `404`, `422`, `503` response cases
 - English/Italian translations
@@ -57,6 +60,32 @@ Backend API repository: [padosoft/eval-harness](https://github.com/padosoft/eval
 - Online monitoring — production pass-rate-over-time chart with a drift
   alert band, consuming `GET /<prefix>/online/{dataset}/trend`
   (requires `padosoft/eval-harness` `^1.3.0`).
+
+### Report detail tabs (eval-harness ^1.6)
+
+The report detail screen reads the v1.6 blocks straight from the artifact the
+detail endpoint already returns, so nothing new has to be exposed server-side.
+Every tab degrades to an explanation on an older report rather than to a zero —
+a run from before repeated sampling did not measure a resolution of `0`, it
+measured nothing, and `0.0%` is a number somebody could act on that nobody
+produced.
+
+- **Rows** — per-row pass rate with its confidence interval, the `row_hash` the
+  regression gate joins on, and, expanded, the row's **worst** execution: what
+  the pipeline produced, the judge's own reason, and the tool calls behind it.
+  Defaults to failing rows, worst first — a run-level macro-F1 says whether to
+  worry, this says which row to open.
+- **Sampling & precision** — repetitions, **the smallest difference the run
+  could actually detect**, whether the difference you are gating on is even
+  detectable at this sample size (and how many repetitions it would take), and
+  the **unstable rows**: the ones that disagree with themselves and fail builds
+  nobody broke.
+- **Cost** — total split into what the provider **billed** and what was
+  **derived** from configured token rates, per-model breakdown, and — said in
+  words rather than in a footnote — *"this total is a floor, not a figure"* when
+  calls ran on a model with no declared rate. A run **halted on its budget**
+  raises an alert on every tab, because every figure in that report describes a
+  partial run and the rows that never executed are unknowns, not passes.
 
 ## Why this package exists
 
