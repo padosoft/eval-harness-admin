@@ -120,3 +120,21 @@ gh api graphql `
 - Il core API incapsula sotto `data`, ma questo admin segue la convenzione "payload piatto" (il mock e2e e i validator del client leggono i campi al top level). La nuova `getOnlineTrend` rispecchia esattamente `getDatasetTrend` per coerenza: non introdurre un unwrap solo per un endpoint.
 - Per un grafico SVG accessibile e testabile, affiancare alla geometria una `<table class="sr-only">` con gli stessi dati: Playwright e screen reader hanno un contratto stabile (celle per data) indipendente dai pixel della polyline.
 - La select dataset della schermata Online riusa `getReports()` per popolare le opzioni (come `TrendPage`), perché non esiste un endpoint "elenca dataset online"; il mock e2e dei report include `rag.faq`.
+
+## 2026-08-24 — Surfacing eval-harness 1.6
+
+- **Read the artifact, don't add an endpoint.** The v1.6 blocks are additive keys
+  on a payload the detail screen already receives in full. New endpoints for data
+  the client is holding would have been work that bought nothing.
+- **Absent is not zero.** A report from before repeated sampling did not measure
+  a resolution of `0` — it measured nothing. Rendering `0.0%` produces a number
+  somebody can act on that nobody produced; every panel degrades to a sentence
+  and a pointer at the flag instead.
+- **Show the worst execution of a row, never the first.** Showing the best one
+  hides the failure the reader opened the row to see.
+- **A budget halt belongs in the header, not only on the cost tab.** Every figure
+  in a halted report describes a partial run, so a reader looking at the metrics
+  tab has to know before they read the metrics.
+- **A cost total that omits what it cannot price is an unknown, not a small
+  bill** — and the small number is the one that gets quoted in a meeting. Say
+  "floor, not a figure" in words.

@@ -6,9 +6,13 @@ import { useI18n } from '@/hooks/useI18n';
 import ErrorPanel from '@/components/ui/ErrorPanel';
 import EmptyState from '@/components/ui/EmptyState';
 import { formatDateTime, formatPercent } from '@/utils/format';
+import CostPanel from '@/components/report/CostPanel';
+import PrecisionPanel from '@/components/report/PrecisionPanel';
+import RowsPanel from '@/components/report/RowsPanel';
+import { readBudget, readCost, readPrecision, readSampleAggregates, readSamples } from '@/utils/reportBlocks';
 import type { CohortsPayload, HistogramsPayload, ReportDetailPayload } from '@/types/models';
 
-type TabKey = 'summary' | 'cohorts' | 'histograms' | 'failures' | 'raw';
+type TabKey = 'summary' | 'rows' | 'sampling' | 'cost' | 'cohorts' | 'histograms' | 'failures' | 'raw';
 
 type FailureRow = {
   category: string;
@@ -97,11 +101,26 @@ const ReportDetailPage = () => {
   const histogramsData = histograms.status === 'ready' ? histograms.data : undefined;
   const hasCohorts = Boolean(cohortsData && cohortsData.cohorts.length > 0);
   const hasHistograms = Boolean(histogramsData && histogramsData.buckets.length > 0);
+  // Read straight from the artifact: the v1.6 blocks are additive keys on a
+  // payload this page already receives in full, so an extra endpoint would buy
+  // nothing.
+  const raw = reportData.raw_json;
+  const precision = readPrecision(raw);
+  const aggregates = readSampleAggregates(raw);
+  const samples = readSamples(raw);
+  const cost = readCost(raw);
+  const budget = readBudget(raw);
   const reportRowsCsvUrl = client.getReportRowsCsvUrl(reportData.id);
   const reportDownloadUrl = client.getReportDownloadUrl(reportData.id);
 
   return (
     <div className="space-y-4">
+      {budget?.halted ? (
+        <div role="alert" className="rounded-ui border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">
+          <span className="font-semibold">{t('text_budget_halted')}</span> {budget.reason}
+        </div>
+      ) : null}
+
       <div className="flex items-center justify-between">
         <div>
           <h2 className="screen-title">
@@ -126,7 +145,7 @@ const ReportDetailPage = () => {
       </div>
 
       <div className="flex gap-2">
-        {(['summary', 'cohorts', 'histograms', 'failures', 'raw'] as TabKey[]).map((tab) => (
+        {(['summary', 'rows', 'sampling', 'cost', 'cohorts', 'histograms', 'failures', 'raw'] as TabKey[]).map((tab) => (
           <button
             key={tab}
             className={`rounded-ui border px-3 py-1.5 text-sm ${activeTab === tab ? 'bg-slate-900 text-white' : 'bg-white'}`}
@@ -149,6 +168,27 @@ const ReportDetailPage = () => {
               </div>
             ))}
           </dl>
+        </section>
+      ) : null}
+
+      {activeTab === 'rows' ? (
+        <section className="panel rounded-ui">
+          <h3 className="mb-2 font-semibold">{t('section_rows')}</h3>
+          <RowsPanel aggregates={aggregates} samples={samples} />
+        </section>
+      ) : null}
+
+      {activeTab === 'sampling' ? (
+        <section className="panel rounded-ui">
+          <h3 className="mb-2 font-semibold">{t('section_sampling')}</h3>
+          <PrecisionPanel precision={precision} aggregates={aggregates} />
+        </section>
+      ) : null}
+
+      {activeTab === 'cost' ? (
+        <section className="panel rounded-ui">
+          <h3 className="mb-2 font-semibold">{t('section_cost')}</h3>
+          <CostPanel cost={cost} budget={budget} />
         </section>
       ) : null}
 
